@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8">
@@ -32,6 +32,8 @@
               $TimeDate_Action = date("Y-m-d H:i:s");
               $date_check = date("Y-m-d");
 
+              $id_order = $_REQUEST['id_order'];
+
               $user_name = trim(user_session::get_user_name());
               $username = trim(user_session::get_user_name());
               $LogId = trim(user_session::get_log_id()); // รับไอดี login จาก session แล้วนำไปอ่านสถานะการออนไลน์
@@ -48,7 +50,7 @@
               $RoleId  = $row_group2["RoleId"];
               $ampId =  $row_group2["ampId"];
 
-              $id_order = $_REQUEST['id_order'];
+              //$id_order = $_REQUEST['id_order'];
 
 
               $result_menu_price = $db->select("id, selling_price", "menu_order", " status ='yes' ");
@@ -79,7 +81,7 @@
                 <?php
               }
               if($numorder != ''){
-                $result_group1 = $db->select("*" , "main_order","date_order ='$date_check' and status ='yes' order by id desc limit 1");
+                $result_group1 = $db->select("*" , "main_order","date_order ='$date_check' and id ='$recipient[2]' ");
                 $num_main_order = $db->num_rows($result_group1);
                 if($num_main_order == 0){
                   $result_group2 = $db->select("*" , "main_order","date_order ='$date_check' and status ='no' order by id desc limit 1");
@@ -92,21 +94,21 @@
                     $id_menu_order = $recipient[0];
                     $total_order = $menu_price[$id_menu_order]*$numorder;
 
-                    $field_order = " `id`,`queue_order`, `date_order`, `date_action`, `id_menu_order`, `number_order`, `total_order`";
-                    $data_order = " '','1', '$date_check', '$TimeDate_Action', '$recipient[0]', '$numorder', '$total_order'";
+                    $field_order = " `id`,`queue_order`,`id_mainorder`, `date_order`, `date_action`, `id_menu_order`, `number_order`, `total_order`, `table_order`";
+                    $data_order = " '','1', '$date_check', '$recipient[2]', '$TimeDate_Action', '$recipient[0]', '$numorder', '$total_order', '$recipient[2]'";
                     $result_order = $db->insert("cus_order", "$field_order", "$data_order");
 
                     ?>
                     <script langquage='javascript'>
                         //alert('<?= $alertstatus ?>');
-                        window.location = "index.php";
+                        window.location = "orderlog.php?id_order=<?=$recipient[2]?>";
                     </script>
                     <?php
                     }else{
                     $row_group2 = $db->fetch_array($result_group2);
                     $queue_order = $row_group2["queue_order"];
 
-                    $result_group3 = $db->select("*" , "cus_order","date_order ='$date_check' and queue_order ='$queue_order' and id_menu_order ='$recipient[0]' ");
+                    $result_group3 = $db->select("*" , "cus_order","date_order ='$date_check' and id_mainorder='$recipient[2]' and queue_order ='$queue_order' and id_menu_order ='$recipient[0]' ");
                     $num_main_order3 = $db->num_rows($result_group3);
                     if($num_main_order3 == 0){
                       $id_menu_order = $recipient[0];
@@ -129,7 +131,7 @@
                     ?>
                     <script langquage='javascript'>
                         //alert('<?= $alertstatus ?>');
-                        window.location = "index.php";
+                        window.location = "orderlog.php?id_order=<?=$recipient[2]?>";
                     </script>
                     <?php
 
@@ -141,7 +143,7 @@
                     $queue_order = $row_group1["queue_order"];
                     $queue_order_last = $queue_order+1;
 
-                    $result_group2 = $db->select("*" , "main_order","date_order ='$date_check' and status ='no' order by id desc limit 1");
+                    $result_group2 = $db->select("*" , "main_order","date_order ='$date_check' and id ='$recipient[2]' ");
                     $num_main_order2 = $db->num_rows($result_group2);
                     if($num_main_order2 == 0){
                       $field_arpay = " `id`,`queue_order`, `date_order`, `date_action`, `status`";
@@ -158,37 +160,37 @@
                       ?>
                       <script langquage='javascript'>
                           //alert('<?= $alertstatus ?>');
-                          window.location = "index.php";
+                          window.location = "orderlog.php?id_order=<?=$recipient[2]?>";
                       </script>
                       <?php
                       }else{
                       $row_group2 = $db->fetch_array($result_group2);
                       $queue_order = $row_group2["queue_order"];
 
-                      $result_group3 = $db->select("*" , "cus_order","date_order ='$date_check' and queue_order ='$queue_order' and id_menu_order ='$recipient[0]' ");
+                      $result_group3 = $db->select("*" , "cus_order","date_order ='$date_check' and id_mainorder ='$recipient[2]' and queue_order ='$queue_order' and id_menu_order ='$recipient[0]' ");
                       $num_main_order3 = $db->num_rows($result_group3);
                       if($num_main_order3 == 0){
                         $id_menu_order = $recipient[0];
                         $total_order = $menu_price[$id_menu_order]*$numorder;
 
-                        $field_order = " `id`,`queue_order`, `date_order`, `date_action`, `id_menu_order`, `number_order`, `total_order`";
-                        $data_order = " '','$queue_order', '$date_check', '$TimeDate_Action', '$recipient[0]', '$numorder', '$total_order'";
+                        $field_order = " `id`,`queue_order`,`id_mainorder`, `date_order`, `date_action`, `id_menu_order`, `number_order`, `total_order`";
+                        $data_order = " '','$queue_order','$recipient[2]', '$date_check', '$TimeDate_Action', '$recipient[0]', '$numorder', '$total_order'";
                         $result_order = $db->insert("cus_order", "$field_order", "$data_order");
                       }else{
                         if($numorder == 'cancel'){
-                          $result_del = $db->delete("cus_order", "date_order ='$date_check' and queue_order ='$queue_order' and id_menu_order ='$recipient[0]'");
+                          $result_del = $db->delete("cus_order", "date_order ='$date_check' and id_mainorder ='$recipient[2]' and queue_order ='$queue_order' and id_menu_order ='$recipient[0]'");
                         }else{
                           $id_menu_order = $recipient[0];
                           $total_order = $menu_price[$id_menu_order]*$numorder;
 
-                          $result_up_cus_order = $db->update("cus_order", "date_action='$TimeDate_Action',id_menu_order='$recipient[0]',number_order='$numorder',total_order='$total_order'", "date_order ='$date_check' and queue_order ='$queue_order' and id_menu_order ='$recipient[0]'  ");
+                          $result_up_cus_order = $db->update("cus_order", "date_action='$TimeDate_Action',id_menu_order='$recipient[0]',number_order='$numorder',total_order='$total_order'", "date_order ='$date_check' and queue_order ='$queue_order' and id_menu_order ='$recipient[0]' and  id_mainorder ='$recipient[2]'  ");
                         }
 
                       }
                       ?>
                       <script langquage='javascript'>
                           //alert('<?= $alertstatus ?>');
-                          window.location = "index.php";
+                          window.location = "orderlog.php?id_order=<?=$recipient[2]?>";
                       </script>
                       <?php
 
@@ -198,7 +200,7 @@
                     ?>
                     <script langquage='javascript'>
                         //alert('<?= $alertstatus ?>');
-                        window.location = "index.php";
+                        window.location = "orderlog.php?id_order=<?=$recipient[2]?>";
                     </script>
                     <?php
 
@@ -242,6 +244,7 @@
                               if($num_main_order2 == '1'){
                                 $row_group2 = $db->fetch_array($result_group2);
                                 $queue_order = $row_group2["queue_order"];
+                                $table_order = $row_group2["table_order"];
 
                                 $result_menu_order = $db->select("id, menu", "menu_order", " status ='yes' ");
                                  while($row_menu_order = $db->fetch_array($result_menu_order))
@@ -257,7 +260,7 @@
                               }
 
                             ?>
-                            <h2>Order Menu คิว (Queue) ที่ <?=$queue_order?></h2>
+                            <h2>Order Menu คิว (Queue) ที่ <?=$queue_order ?> : โต๊ะที่ <?=$table_order?></h2>
                             <a href="about.php?index=2" class="nav-item nav-link active">Menu ที่สั่ง</a>
                         </div>
                         <?php
@@ -277,9 +280,11 @@
                           <?php
                           $numorder = 1; $sell_all=0;
                           while($row_group = $db->fetch_array($result_group2)){
+                                $cus_id = $row_group["id"];
                                 $queue_order = $row_group["queue_order"];
                                 $id_menu_order = $row_group["id_menu_order"];
                                 $number_order = $row_group["number_order"];
+                                $date_action = $row_group["date_action"];
                           ?>
                           <tr>
                             <td style="text-align: center"><?=$numorder?></td>
@@ -289,7 +294,16 @@
                             <td style="text-align: center"><?=$menu_price[$id_menu_order]*$number_order?></td>
                             <td style="text-align: center">บาท</td>
                             <td style="text-align: center">
-                              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal_1" data-whatever="<?=$id_menu_order;?>:<?=$menu_name[$id_menu_order];?>">แก้ไข/ยกเลิก Order</button>
+                              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal_1" data-whatever="<?=$id_menu_order;?>:<?=$menu_name[$id_menu_order];?>:<?=$id_order;?>">แก้ไข/ยกเลิก Order</button>
+                            </td>
+
+                            <td style="text-align: center">
+
+                              <a target="_blank" href="export_pdf/views/receipt_1.php?q=<?=$cus_id?>&date_order=<?=$date_action?>&table_order=<?=$table_order?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
+                                <span class="badge badge-sm bg-gradient-danger">ออกบิลรายการ</span>
+                              </a>
+
+                              <!--<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal_1" data-whatever="<?=$id_menu_order;?>:<?=$menu_name[$id_menu_order];?>">พิมพ์ใบเสร็จ</button>-->
                             </td>
                           </tr>
                           <?php $numorder = $numorder+1;
@@ -315,6 +329,7 @@
                             <td style="text-align: center"><?=$sell_all?></td>
                             <td style="text-align: center">บาท</td>
                             <td style="text-align: center">
+                              <!-- คิดเงิน -->
                               <div class="container-fluid">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -339,6 +354,39 @@
                                       post.order1 = '<?=$queue_order;?>'
                                       post.description = '<?=$sell_all?>';
 
+                                      $('#contianer_modals').load('modals.php',post,function(){
+                                          $("#modal").modal('show');
+                                      });
+                                  }
+                                  </script>
+
+
+                            </td>
+                            <td style="text-align: center">
+                              <!-- ออกใบเสร็จ -->
+                              <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <a class='btn btn-warning ' onclick="loadAndShowModal();">ออกบิลรายการรวม</a>
+                                        <!--<button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal_5" data-whatever="Order Menu คิว (Queue)ที่ : <?=$queue_order;?>">ยืนยัน  Order  สินค้า</button>-->
+                                    </div>
+                                </div>
+                              </div>
+
+                            <script   src="css/jquery-3.5.1.min.js"></script>
+                            <script   src="css/bootstrap.min.js"></script>
+                            <div id="contianer_modals"></div>
+                              <script>
+                                  window.onload = function() {
+                                  document.getElementById("number3").focus();
+                                  }
+                              </script>
+                              <script>
+                                  function loadAndShowModal(){
+                                      var post = new Object();
+                                      post.name = 'Order Menu คิว (Queue)ที่ :<?=$queue_order;?>'
+                                      post.order1 = '<?=$queue_order;?>'
+                                      post.description = '<?=$sell_all?>';
                                       $('#contianer_modals').load('modals.php',post,function(){
                                           $("#modal").modal('show');
                                       });
@@ -418,7 +466,7 @@
                                       <div class="menu-text">
                                           <h3><span><?=$row_group1["menu"];?></span> <strong>$<?=$row_group1["selling_price"];?></strong></h3>
                                           <br>
-                                          <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal" data-whatever="<?=$row_group1["id"];?>:<?=$row_group1["menu"];?>">เลือกรายการ <?=$row_group1["menu"];?></button>
+                                          <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal" data-whatever="<?=$row_group1["id"];?>:<?=$row_group1["menu"];?>:<?=$id_order;?>">เลือกรายการ <?=$row_group1["menu"];?></button>
                                       </div>
                                   </div>
                                   <?php }  ?>
@@ -433,164 +481,7 @@
 
 
 
-                        <!--<div id="burgers" class="container tab-pane">
-                            <div class="row">
-                                <div class="col-lg-7 col-md-12">
-                                    <div class="menu-item">
-                                        <div class="menu-img">
-                                            <img src="img/menu-burger.jpg" alt="Image">
-                                        </div>
-                                        <div class="menu-text">
-                                            <h3><span>Mini cheese Burger</span> <strong>$9.00</strong></h3>
-                                            <p>Lorem ipsum dolor sit amet elit. Phasel nec preti facil</p>
-                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Open modal for @mdo</button>
-                                        </div>
-                                    </div>
-                                    <div class="menu-item">
-                                        <div class="menu-img">
-                                            <img src="img/menu-burger.jpg" alt="Image">
-                                        </div>
-                                        <div class="menu-text">
-                                            <h3><span>Double size burger</span> <strong>$11.00</strong></h3>
-                                            <p>Lorem ipsum dolor sit amet elit. Phasel nec preti facil</p>
-                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@fat">Open modal for @fat</button>
-                                        </div>
-                                    </div>
-                                    <div class="menu-item">
-                                        <div class="menu-img">
-                                            <img src="img/menu-burger.jpg" alt="Image">
-                                        </div>
-                                        <div class="menu-text">
-                                            <h3><span>Bacon, EGG and Cheese</span> <strong>$13.00</strong></h3>
-                                            <p>Lorem ipsum dolor sit amet elit. Phasel nec preti facil</p>
-                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@getbootstrap">Open modal for @getbootstrap</button>
-                                        </div>
-                                    </div>
-                                    <div class="menu-item">
-                                        <div class="menu-img">
-                                            <img src="img/menu-burger.jpg" alt="Image">
-                                        </div>
-                                        <div class="menu-text">
-                                            <h3><span>Pulled porx Burger</span> <strong>$18.00</strong></h3>
-                                            <p>Lorem ipsum dolor sit amet elit. Phasel nec preti facil</p>
-                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@getbootstrap1">Open modal for @getbootstrap1</button>
-                                        </div>
-                                    </div>
-                                    <div class="menu-item">
-                                        <div class="menu-img">
-                                            <img src="img/menu-burger.jpg" alt="Image">
-                                        </div>
-                                        <div class="menu-text">
-                                            <h3><span>Fried chicken Burger</span> <strong>$22.00</strong></h3>
-                                            <p>Lorem ipsum dolor sit amet elit. Phasel nec preti facil</p>
-                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@getbootstrap2">Open modal for @getbootstrap2</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-5 d-none d-lg-block">
-                                    <img src="img/menu-burger-img.jpg" alt="Image">
-                                </div>
-                            </div>
-                        </div>
-                        <div id="snacks" class="container tab-pane fade">
-                            <div class="row">
-                                <div class="col-lg-7 col-md-12">
-                                    <div class="menu-item">
-                                        <div class="menu-img">
-                                            <img src="img/menu-snack.jpg" alt="Image">
-                                        </div>
-                                        <div class="menu-text">
-                                            <h3><span>Corn Tikki - Spicy fried Aloo</span> <strong>$15.00</strong></h3>
-                                            <p>Lorem ipsum dolor sit amet elit. Phasel nec preti facil</p>
-                                        </div>
-                                    </div>
-                                    <div class="menu-item">
-                                        <div class="menu-img">
-                                            <img src="img/menu-snack.jpg" alt="Image">
-                                        </div>
-                                        <div class="menu-text">
-                                            <h3><span>Bread besan Toast</span> <strong>$35.00</strong></h3>
-                                            <p>Lorem ipsum dolor sit amet elit. Phasel nec preti facil</p>
-                                        </div>
-                                    </div>
-                                    <div class="menu-item">
-                                        <div class="menu-img">
-                                            <img src="img/menu-snack.jpg" alt="Image">
-                                        </div>
-                                        <div class="menu-text">
-                                            <h3><span>Healthy soya nugget snacks</span> <strong>$20.00</strong></h3>
-                                            <p>Lorem ipsum dolor sit amet elit. Phasel nec preti facil</p>
-                                        </div>
-                                    </div>
-                                    <div class="menu-item">
-                                        <div class="menu-img">
-                                            <img src="img/menu-snack.jpg" alt="Image">
-                                        </div>
-                                        <div class="menu-text">
-                                            <h3><span>Tandoori Soya Chunks</span> <strong>$30.00</strong></h3>
-                                            <p>Lorem ipsum dolor sit amet elit. Phasel nec preti facil</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-5 d-none d-lg-block">
-                                    <img src="img/menu-snack-img.jpg" alt="Image">
-                                </div>
-                            </div>
-                        </div>
-                        <div id="beverages" class="container tab-pane fade">
-                            <div class="row">
-                                <div class="col-lg-7 col-md-12">
-                                    <div class="menu-item">
-                                        <div class="menu-img">
-                                            <img src="img/menu-beverage.jpg" alt="Image">
-                                        </div>
-                                        <div class="menu-text">
-                                            <h3><span>Single Cup Brew</span> <strong>$7.00</strong></h3>
-                                            <p>Lorem ipsum dolor sit amet elit. Phasel nec preti facil</p>
-                                        </div>
-                                    </div>
-                                    <div class="menu-item">
-                                        <div class="menu-img">
-                                            <img src="img/menu-beverage.jpg" alt="Image">
-                                        </div>
-                                        <div class="menu-text">
-                                            <h3><span>Caffe Americano</span> <strong>$9.00</strong></h3>
-                                            <p>Lorem ipsum dolor sit amet elit. Phasel nec preti facil</p>
-                                        </div>
-                                    </div>
-                                    <div class="menu-item">
-                                        <div class="menu-img">
-                                            <img src="img/menu-beverage.jpg" alt="Image">
-                                        </div>
-                                        <div class="menu-text">
-                                            <h3><span>Caramel Macchiato</span> <strong>$15.00</strong></h3>
-                                            <p>Lorem ipsum dolor sit amet elit. Phasel nec preti facil</p>
-                                        </div>
-                                    </div>
-                                    <div class="menu-item">
-                                        <div class="menu-img">
-                                            <img src="img/menu-beverage.jpg" alt="Image">
-                                        </div>
-                                        <div class="menu-text">
-                                            <h3><span>Standard black coffee</span> <strong>$8.00</strong></h3>
-                                            <p>Lorem ipsum dolor sit amet elit. Phasel nec preti facil</p>
-                                        </div>
-                                    </div>
-                                    <div class="menu-item">
-                                        <div class="menu-img">
-                                            <img src="img/menu-beverage.jpg" alt="Image">
-                                        </div>
-                                        <div class="menu-text">
-                                            <h3><span>Standard black coffee</span> <strong>$12.00</strong></h3>
-                                            <p>Lorem ipsum dolor sit amet elit. Phasel nec preti facil</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-5 d-none d-lg-block">
-                                    <img src="img/menu-beverage-img.jpg" alt="Image">
-                                </div>
-                            </div>
-                        </div>-->
+
                     </div>
                 </div>
             </div>
@@ -672,10 +563,6 @@
               </div>
               <div class="modal-body">
                 <form class="form-horizontal" action="<?php echo htmlentities($_SERVER['PHP_SELF']); ?>" method="post">
-                  <div class="form-group">
-                    <label for="recipient-name" class="control-label">คิวที่:</label>
-                    <input type="text" name="recipient-name" class="form-control" id="recipient-name">
-                  </div>
                   <div class="form-group">
                     <label for="recipient-order-all" class="control-label">จำนวนเงิน:</label>
                     <input type="text" name="recipient-order-all" class="form-control" id="recipient-order-all">

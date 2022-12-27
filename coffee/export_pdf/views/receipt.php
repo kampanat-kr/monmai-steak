@@ -36,7 +36,8 @@
   <style>
     body   { font-family: Mitr; height:AUTO; }
     p.center  { font-family: 'Noto Sans Thai', sans-serif; font-size: 35pt; font-weight: bold; text-align: center; }
-    p.wifi  { font-family: 'Noto Sans Thai', sans-serif; font-size: 20pt; font-weight: bold; text-align: center; line-height: 5mm }
+    p.wifi  { font-family: Monospace ; font-size: 35pt; font-weight: bold; text-align: center; line-height: 5mm }
+    p.title {font-family: Monospace ; font-size: 35pt; font-weight: bold;}
 	  #pdf   { text-align:justify; height:AUTO; }
     h1     { font-family: 'Noto Sans Thai', cursive; font-size: 60pt; line-height: 18mm; text-align:center;}
     h2, h3 { font-family: 'Noto Sans Thai', sans-serif; font-size: 35pt; line-height: 7mm; text-align:center; }
@@ -56,18 +57,23 @@
 
   </style>
 </head>
+<?php
+   $result_group2 = $db->select("*" , "main_order","date_order ='$date_orderadd' and queue_order ='$queue_order' order by id desc ");
+   $row_group2 = $db->fetch_array($result_group2);
+   $payment = $row_group2["payment"];
+   $change_menu = $row_group2["change_menu"];
+   $table_order = $row_group2["table_order"];
+?>
 <body onLoad='javascript:window.print();' class="A4 Portrait">
   <section class="sheet padding-0mm" id="pdf">
     <br><br><br><br><br>
-    <h1>โต๊ะที่ No : <?=$queue_order?></h1><br>
+    <h1>โต๊ะที่ No : <?=$table_order?></h1><br>
     <h1>ขนำไร่  ชายน้ำ</h1><br>
     <h4>วันที่ <?php echo $date_order;?> </h4>
     <?php
 
-    $result_group2 = $db->select("*" , "main_order","date_order ='$date_orderadd' and queue_order ='$queue_order' order by id desc ");
-     $row_group2 = $db->fetch_array($result_group2);
-     $payment = $row_group2["payment"];
-     $change_menu = $row_group2["change_menu"];
+
+
 
 
 
@@ -90,16 +96,16 @@
       <br>
       <table width="100%" >
         <tr height ="60">
-            <td width="5%"><h2></h2></td>
-            <td width="55%"><h2>รายการ</h2></td>
-            <td width="25%"><p class="center">จำนวน</p></td>
-            <td width="15%"><p class="center">รวม</p></td>
+            <td width="3%"><h2></h2></td>
+            <td width="57%"><p class="title">รายการ</p></td>
+            <td width="20%"><p class="center title">จำนวน</p></td>
+            <td width="20%"><p class="center title">รวม</p></td>
         </tr>
-        <tr height ="30">
-            <td width="5%"><h2></h2></td>
-            <td width="55%"><h2></h2></td>
-            <td width="25%"><h2></h2></td>
-            <td width="15%"><h2></h2></td>
+        <tr height ="15">
+            <td width="3%"><h2></h2></td>
+            <td width="57%"><h2></h2></td>
+            <td width="20%"><h2></h2></td>
+            <td width="20%"><h2></h2></td>
         </tr>
       <?php
         $numorder = 1; $sell_all=0;
@@ -111,10 +117,10 @@
 
         ?>
         <tr height ="60">
-            <td width="5%"><h2></h2></td>
-            <td width="55%"><h2><?=$menu_name[$id_menu_order]?></h2></td>
-            <td width="25%"><p class="center"><?=$number_order?></p></td>
-            <td width="15%"><p class="center"><?=$number_order*$menu_price[$id_menu_order]?></p></td>
+            <td width="3%"><h2></h2></td>
+            <td width="57%"><h2><?=$menu_name[$id_menu_order]?></h2></td>
+            <td width="20%"><p class="center"><?=$number_order?></p></td>
+            <td width="20%"><p class="center"><?=$number_order*$menu_price[$id_menu_order]?></p></td>
 
         </tr>
         <?php $numorder = $numorder+1;

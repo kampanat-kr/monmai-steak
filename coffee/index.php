@@ -203,9 +203,9 @@
                         ?>
                         <table style="width:100%" border="1">
                           <tr>
-                            <th>คิวที่</th>
-                            <th>โต๊ะ</th>
-                            <th style="text-align: center">รายการ</th>
+                            <th style="text-align: center">คิว (Queue)</th>
+                            <th style="text-align: center">โต๊ะ</th>
+                            <!--<th style="text-align: center">รายการ</th>-->
                             <th style="text-align: center">จำนวนเงิน</th>
                             <th style="text-align: center">แก้ไข/ยกเลิก</th>
                           </tr>
@@ -219,7 +219,7 @@
                                 //$total_order =  $row_group["total_order"];
 
                                 $result_group1 = $db->select("sum(total_order) as total_order" , "cus_order","date_order ='$date_check' and queue_order ='$queue_order' ");
-                                //$num_main_order1 = $db->num_rows($result_group1);
+                                $num_main_order1 = $db->num_rows($result_group1);
                                 $row_group1 = $db->fetch_array($result_group1);
                                 $total_order =  $row_group1["total_order"];
 
@@ -227,9 +227,9 @@
                                 $num_main_order1 = $db->num_rows($result_group5);
                           ?>
                           <tr>
-                            <td style="text-align: center"><?=$numorder?></td>
-                            <td style="text-align: left"><?=$table_order?></td>
-                            <td style="text-align: center"><?=$num_main_order1?></td>
+                            <td style="text-align: center"><?=$queue_order?></td>
+                            <td style="text-align: center"><?=$table_order?></td>
+                            <!--<td style="text-align: center"><?=$num_main_order1?></td>-->
                             <td style="text-align: center"><?=$total_order?></td>
                             <td style="text-align: center">
                               <a href="orderlog.php?part=<?php echo md5("update_jpt");?>&id_order=<?=$id_order?>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
